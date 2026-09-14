@@ -18,7 +18,7 @@ Web 的 Appearance、Language 和繁忙态 Enter 偏好原本存在浏览器 `lo
 
 用户变更会同步更新实时服务，并经 `scope.set` 将一项 `settings.mutate` 路径操作排入队列。scope 会串行处理手势，以最新已知 namespace revision 作为 `expectedRevision` 发送，记录每次成功写入的 revision，并且只允许最新写入的结算结果重新发布实时状态。最新写入被拒或失败时，scope 会重新加载 Host 状态。插件释放会拒绝新工作、跳过已排队操作、抑制运行中操作发布状态，并等待该操作结算后才让插件达到完全停稳。
 
-Client 在非 loopback 页面禁用 Host 持久化，因此这些页面的偏好仍只保留在进程内，尽管 Connection 认证完整 API。动态第三方主题 id 仍是内置 Host schema 之外的进程内扩展；移除其中一个会重置实时注册表，但不会替换上一个持久化的内置偏好。
+[已认证浏览器设置决策](2026-09-15-authenticated-browser-settings.zh.md)取代本记录中的非 loopback 持久化限制；共享设置为所有浏览器使用已认证的 Host 连接。动态第三方主题 id 仍是内置 Host schema 之外的进程内扩展；移除其中一个会重置实时注册表，但不会替换上一个持久化的内置偏好。
 
 ## 曾考虑的替代方案
 
@@ -40,4 +40,4 @@ Appearance、Language 和繁忙态 Enter 选择会跟随 DSH 用户 home，跨�
 
 启动时可能会在后台读取结算前短暂显示领域默认值。短暂的读取失败会保留该默认值或上一个正确的进程内值；重连时会重试。写入被拒时，界面可能会在本地值立即变化后明显恢复为持久化偏好。
 
-聚焦的单元测试覆盖 schema 注册、先监听后读取的顺序、非阻塞激活、经 schema 校验的分节接受、携带 revision 的有序写入、陈旧响应隔离、故障恢复、释放时完全停稳，以及远程端仅内存模式。以 namespace 为粒度的 scope 也承载多字段分节，因此后续的配置表面可以沿用同一份生命周期，而不必手搭 describe/mutate 同步。无密钥 Web settings 场景通过 UI 写入全部三项偏好，校验 YAML 文档并确认旧 `localStorage` 为空，重新加载，再使用同一个 DSH home 在不同端口上启动另一个 Host。
+聚焦的单元测试覆盖 schema 注册、先监听后读取的顺序、非阻塞激活、经 schema 校验的分节接受、携带 revision 的有序写入、陈旧响应隔离、故障恢复、释放时完全停稳，以及显式的仅内存 scope。以 namespace 为粒度的 scope 也承载多字段分节，因此后续的配置表面可以沿用同一份生命周期，而不必手搭 describe/mutate 同步。无密钥 Web settings 场景通过 UI 写入全部三项偏好，校验 YAML 文档并确认旧 `localStorage` 为空，重新加载，再使用同一个 DSH home 在不同端口上启动另一个 Host。

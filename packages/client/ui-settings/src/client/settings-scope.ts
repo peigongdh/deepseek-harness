@@ -57,7 +57,7 @@ export class SettingsScopeController<T> implements SettingsScope<T> {
    * namespace carries this scope's writes (reads ride the mirror).
    * @param spec - namespace identity and optional narrowing decoder.
    * @param mirror - the shared describe mirror this scope derives from.
-   * @param persistence - client-selected Host persistence; non-loopback pages may remain process-local.
+   * @param persistence - client-selected Host persistence; explicit memory consumers remain process-local.
    * @param schema - settings-owned schema operations.
    */
   constructor(
@@ -244,7 +244,7 @@ export class SettingsScopeBinder extends Service {
    * @param ctx - the providing plugin's context.
    * @param config - the shared describe mirror every bound scope derives from,
    * the settings-owned schema operations, and the Host persistence the provider
-   * resolved from `remote.$host`.
+   * selected for its consumers.
    */
   constructor(ctx: Context, config: {
     mirror: SettingsDescribeMirror

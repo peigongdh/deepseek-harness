@@ -42,7 +42,6 @@ async function bench(isLoopback = true, mock = RemoteMock.create().load(remoteDe
     },
     settings: mock.remote.settings,
   })
-  // The fixed Host facts the settings provider reads its persistence from.
   remote.$host = { home: undefined, isLoopback }
   await ctx.plugin({ inject: [...settingsInject], apply: settingsApply }).await()
   return { ctx, slots: ctx.get('slots') as SlotRegistry, locale, remote }
@@ -195,7 +194,7 @@ describe('ui-settings-models apply', () => {
     expect(() => b.locale.register('settings.models', 'en', {})).not.toThrow()
   })
 
-  it('keeps remote-browser acknowledgement in process memory', async () => {
+  it('reports a missing Host acknowledgement namespace in a remote browser', async () => {
     const b = await bench(false)
     declare(b.slots)
     await b.ctx.plugin({ inject: [...inject], apply }).await()
@@ -207,7 +206,7 @@ describe('ui-settings-models apply', () => {
 
     await injected.controller.load()
     expect(injected.controller.store.getSnapshot()).toEqual({
-      status: 'ready', acknowledged: false, error: null,
+      status: 'error', acknowledged: false, error: 'welcome acknowledgement settings are unavailable',
     })
   })
 })

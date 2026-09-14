@@ -25,24 +25,27 @@ import {
 } from './scaffold.ts'
 import { ZH_BROWSER_LOCALE, saveFailureShot } from './support.ts'
 
-const SNAPSHOT_DIR = fileURLToPath(new URL('./expected/models-settings', import.meta.url))
-const EMPTY_EXPECTED = join(SNAPSHOT_DIR, 'empty.expected.md')
-const CONFIGURED_EXPECTED = join(SNAPSHOT_DIR, 'configured.expected.md')
-const DECLARED_EXPECTED = join(SNAPSHOT_DIR, 'declared.expected.md')
-const DECLARED_EDIT_EXPECTED = join(SNAPSHOT_DIR, 'declared-edit.expected.md')
-const MODEL_PICKER_EXPECTED = join(SNAPSHOT_DIR, 'model-picker.expected.md')
-const NATIVE_DELETE_EXPECTED = join(SNAPSHOT_DIR, 'native-delete.expected.md')
-const DELETE_EXPECTED = join(SNAPSHOT_DIR, 'delete.expected.md')
 const MODE = webSnapshotMode()
 
-describe('web e2e: Models settings page configures a dormant provider', () => {
+describe.each([undefined, 'models.localhost'])('web e2e: Models settings with authority %s', (remoteAuthority) => {
+  const SNAPSHOT_DIR = fileURLToPath(new URL(
+    remoteAuthority === undefined ? './expected/models-settings' : './expected/models-settings-remote',
+    import.meta.url,
+  ))
+  const EMPTY_EXPECTED = join(SNAPSHOT_DIR, 'empty.expected.md')
+  const CONFIGURED_EXPECTED = join(SNAPSHOT_DIR, 'configured.expected.md')
+  const DECLARED_EXPECTED = join(SNAPSHOT_DIR, 'declared.expected.md')
+  const DECLARED_EDIT_EXPECTED = join(SNAPSHOT_DIR, 'declared-edit.expected.md')
+  const MODEL_PICKER_EXPECTED = join(SNAPSHOT_DIR, 'model-picker.expected.md')
+  const NATIVE_DELETE_EXPECTED = join(SNAPSHOT_DIR, 'native-delete.expected.md')
+  const DELETE_EXPECTED = join(SNAPSHOT_DIR, 'delete.expected.md')
   let scaffold: WebScaffold
   let browser: Browser
   let page: Page
   let tripwire: ReturnType<typeof watchConsole>
 
   beforeAll(async () => {
-    scaffold = await launchWebScaffold({})
+    scaffold = await launchWebScaffold(remoteAuthority === undefined ? {} : { remoteAuthority })
     browser = await chromium.launch()
     // The scenario asserts the shipped Chinese copy, so the browser asks for it.
     page = await browser.newPage({ viewport: { width: 1680, height: 1000 }, locale: ZH_BROWSER_LOCALE })

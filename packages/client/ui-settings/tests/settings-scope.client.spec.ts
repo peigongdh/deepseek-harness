@@ -435,7 +435,7 @@ describe('SettingsScopeController', () => {
     expect(scope.getSnapshot()).toMatchObject({ value: { preference: 'dark' }, revision: 1 })
   })
 
-  it('keeps a remote browser in memory mode without Host calls', async () => {
+  it('keeps an explicit memory scope without Host calls', async () => {
     const describeCall = vi.fn()
     const mutate = vi.fn()
     const ctx = ctxWith({ describe: describeCall, mutate })
@@ -540,7 +540,7 @@ describe('SettingsScopeBinder.bind', () => {
     expect(theme.getSnapshot()).toMatchObject({ revision: 1 })
   })
 
-  it('binds a remote browser in memory mode without starting a settings read', async () => {
+  it('binds an explicit memory scope without starting a settings read', async () => {
     const describeCall = vi.fn()
     const mirror = new SettingsDescribeMirror(ctxWith({ describe: describeCall }), 'memory')
     const ctx = new Context()

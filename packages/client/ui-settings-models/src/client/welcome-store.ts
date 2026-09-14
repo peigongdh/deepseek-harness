@@ -1,8 +1,7 @@
 /**
  * Welcome-notice state derived from the welcome settings scope. The scope is
- * the transport: a loopback browser follows the durable Host section, while a
- * remote browser's memory-mode scope never answers and the acknowledgement
- * stays process-local here.
+ * the transport: authenticated browsers follow the durable Host section;
+ * explicit memory-mode scopes keep acknowledgement process-local.
  */
 
 import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
@@ -39,7 +38,7 @@ function assertNever(_value: never): never {
   throw new Error('unexpected welcome settings status')
 }
 
-/** Coordinates durable Host acknowledgement or a process-local remote fallback. */
+/** Coordinates durable Host acknowledgement or an explicit process-local fallback. */
 export class WelcomeNoticeStore {
   /** uSES-safe state source shared by the registered welcome step. */
   readonly store: SnapshotStore<WelcomeNoticeState> = createSnapshotStore<WelcomeNoticeState>({
@@ -52,7 +51,7 @@ export class WelcomeNoticeStore {
 
   /**
    * @param scope - the welcome settings namespace scope; its memory mode is
-   * what keeps a remote browser process-local.
+   * what keeps an explicit memory consumer process-local.
    */
   constructor(private readonly scope: SettingsScope<WelcomeSection>) {}
 
@@ -67,8 +66,8 @@ export class WelcomeNoticeStore {
   }
 
   /**
-   * Persist this copy version, or advance only this process for a remote
-   * browser. Success is judged against the state the write left behind, so a
+   * Persist this copy version, or advance only this process for a memory
+   * scope. Success is judged against the state the write left behind, so a
    * refused or failed write reports false after its recovery read settles.
    * @returns true when the selected persistence mode holds the acknowledgement.
    */
