@@ -3,8 +3,8 @@
   - text: "1"
   - button "Request 1 Ask a research subagent to explain event sourcing. 7 records · Failed"
 - main:
-  - strong: Ask a research subagent to explain event sourcing.
-  - text: Execution order runs downward · Cards show recorded duration User / context Model Tools / mechanisms Turn 1 ·Message
+  - paragraph: Ask a research subagent to explain event sourcing.
+  - text: Execution order runs downward · Cards show recorded duration Turn 1 ·Message User / context
   - 'button "SYSTEM #7 SYSTEM Initial System Prompt {{duration}}"':
     - text: "SYSTEM #7"
     - strong: SYSTEM
@@ -17,19 +17,29 @@
     - text: "CONTEXT #9"
     - strong: CONTEXT
     - text: "@deepseek-ai/dsh-system-prompt {{duration}}"
-  - text: Turn 1 ·Step 1
+  - text: Turn 1 ·Step 1 Model
   - 'button "Message #13 Message Event sourcing is a pattern where all changes to an application''s state are stored as an immutable, append-only sequence of events, rather than persisting only the current state, enabling full auditability, temporal queries, and event-driven architectures. {{duration}}"':
     - text: "Message #13"
     - strong: Message
     - text: Event sourcing is a pattern where all changes to an application's state are stored as an immutable, append-only sequence of events, rather than persisting only the current state, enabling full auditability, temporal queries, and event-driven architectures. {{duration}}
-  - text: Between turns ·State evidence
-  - 'button "Agent collaboration #16 Child registered event-sourcing researcher State evidence"':
-    - text: "Agent collaboration #16"
-    - strong: Child registered
-    - text: event-sourcing researcher State evidence
+  - text: Between turns ·State evidence Tools / mechanisms
+  - strong:
+    - img
+    - text: Agent delegation
+  - text: 1 members
+  - paragraph: Summary of loaded history; later receipts retain their arrival positions.
+  - paragraph: "Parent observations: dispatch and receipts · Delivery is not the execution end time"
+  - strong: Members
+  - text: Concurrency not recorded
+  - strong: event-sourcing researcher
+  - text: 1 settlement notices received
+  - 'button "Child registered · #16"'
+  - 'button "Settlement notice received · #21"'
+  - paragraph: 1 messages, notices or controls
   - button "Collapse child" [expanded]
+  - group: Inspect 2 raw events
   - paragraph: Child Session trajectory · {{uuid}}
-  - text: Turn 1 ·Message
+  - text: Turn 1 ·Message User / context
   - 'button "SYSTEM #7 SYSTEM Initial System Prompt {{duration}}"':
     - text: "SYSTEM #7"
     - strong: SYSTEM
@@ -42,21 +52,21 @@
     - text: "CONTEXT #9"
     - strong: CONTEXT
     - text: "@deepseek-ai/dsh-system-prompt {{duration}}"
-  - text: Turn 1 ·Step 1
+  - text: Turn 1 ·Step 1 Model
   - 'button "Message #13 Message Event sourcing is a pattern where all changes to an application''s state are stored as an immutable, append-only sequence of events, rather than persisting only the current state, enabling full auditability, temporal queries, and event-driven architectures. {{duration}}"':
     - text: "Message #13"
     - strong: Message
     - text: Event sourcing is a pattern where all changes to an application's state are stored as an immutable, append-only sequence of events, rather than persisting only the current state, enabling full auditability, temporal queries, and event-driven architectures. {{duration}}
-  - text: Turn 2 ·Step 1
+  - text: Turn 2 ·Step 1 Model
   - 'button "Message #20 Message Inspect raw evidence Failed"':
     - text: "Message #20"
     - strong: Message
     - text: Inspect raw evidence Failed
-  - text: Turn 2 ·Message
-  - 'button "Agent collaboration #21 CONTEXT subagent-settled {{duration}}"':
-    - text: "Agent collaboration #21"
-    - strong: CONTEXT
-    - text: subagent-settled {{duration}}
+  - text: Turn 2 ·Message Tools / mechanisms
+  - 'button "Asynchronous receipt · #21 event-sourcing researcher · Child settlement notice"':
+    - text: "Asynchronous receipt · #21"
+    - strong: event-sourcing researcher · Child settlement notice
+  - button "Locate dispatch"
 - complementary:
   - complementary "Event details":
     - text: USER Turn 1 · Message

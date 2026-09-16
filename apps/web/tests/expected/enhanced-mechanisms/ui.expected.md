@@ -1,0 +1,69 @@
+- navigation "User requests":
+  - strong: User requests
+  - text: "2"
+  - button
+  - button "Request 2 Reset the list. 3 records"
+- main:
+  - paragraph: Review the implementation. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations.
+  - button "Expand full request"
+  - text: Execution order runs downward · Cards show recorded duration User / context Model Tools / mechanisms Turn 1 ·Message
+  - 'button "USER #3 USER Review the implementation. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Chec {{duration}}"':
+    - text: "USER #3"
+    - strong: USER
+    - text: Review the implementation. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Check the user-visible behavior, compare the evidence, and report the limitations. Chec {{duration}}
+  - text: Turn 1 ·Step 1
+  - 'button "Message #14 Message Review complete. {{duration}}"':
+    - text: "Message #14"
+    - strong: Message
+    - text: Review complete. {{duration}}
+  - text: Plan mode Enter plan mode Plan review Leave plan mode
+  - 'button "Plans / goals #4 Plan mode enabled { \"active\": true } State evidence"':
+    - text: "Plans / goals #4"
+    - strong:
+      - img
+      - text: Plan mode enabled
+    - text: "{ \"active\": true } State evidence"
+  - text: Todo updated
+  - 'button "Plans / goals #5 Task list state change Pending 0 · Active 1 · Complete 0 State evidence"':
+    - text: "Plans / goals #5"
+    - strong:
+      - img
+      - text: Task list state change
+    - text: Pending 0 · Active 1 · Complete 0 State evidence
+  - strong:
+    - img
+    - text: Independent review
+  - text: Completed
+  - paragraph: Summary of loaded history; later receipts retain their arrival positions.
+  - 'button "Workflow start · #6"'
+  - 'button "Workflow end · #11"'
+  - paragraph: Aligned by member event order · Length does not represent duration
+  - strong: review
+  - text: Observed execution overlap
+  - strong: Read behavior
+  - text: Completed
+  - 'button "Started · #7"'
+  - 'button "Ended · #10"'
+  - button "Expand child here"
+  - strong: Check evidence
+  - text: Completed
+  - 'button "Started · #8"'
+  - 'button "Ended · #9"'
+  - button "Expand child here"
+  - group: Inspect 6 raw events
+  - text: Todo updated
+  - 'button "Plans / goals #12 Task list state change Pending 0 · Active 1 · Complete 0 → Pending 0 · Active 0 · Complete 1 State evidence"':
+    - text: "Plans / goals #12"
+    - strong:
+      - img
+      - text: Task list state change
+    - text: Pending 0 · Active 1 · Complete 0 → Pending 0 · Active 0 · Complete 1 State evidence
+  - 'button "Previous state · #5"'
+  - text: Plan mode Enter plan mode Plan review Leave plan mode
+  - 'button "Plans / goals #13 Plan mode disabled { \"active\": false } State evidence"':
+    - text: "Plans / goals #13"
+    - strong:
+      - img
+      - text: Plan mode disabled
+    - text: "{ \"active\": false } State evidence"
+  - 'button "Previous state · #4"'

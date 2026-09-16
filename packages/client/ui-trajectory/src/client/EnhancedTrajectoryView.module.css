@@ -53,9 +53,12 @@
 .requestTitle { font-size: 13px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .canvas { flex: 1; min-width: 0; overflow: auto; padding: 0 20px calc(var(--dsh-composer-height, 152px) + 24px); container: enhanced-canvas / inline-size; }
 .canvasHeader { display: flex; flex-direction: column; gap: 8px; padding: 20px 0 18px; }
-.canvasHeader strong { font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
+.requestHeading { min-width: 0; }
+.requestPreview { margin: 0; font-size: 14px; font-weight: 400; line-height: 1.6; overflow-wrap: anywhere; white-space: pre-wrap; }
+.requestPreview[data-expanded="false"] { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.requestHeading > button { margin-top: 6px; }
 .canvasHeader > span { font-size: 11px; color: var(--enhanced-muted); }
-.laneHeadings, .lanes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.laneHeadings, .lanes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 3fr); gap: 22px; }
 .laneHeadings { border-bottom: 1px solid var(--enhanced-border); padding-bottom: 10px; font-size: 11px; color: var(--enhanced-muted); }
 .step { position: relative; padding: 16px 0 22px; }
 .stepHeading { justify-content: flex-start; color: var(--enhanced-muted); font-size: 11px; margin-bottom: 12px; }
@@ -94,7 +97,8 @@
 .card[data-error="true"] { border-bottom: 2px solid var(--dsw-alias-state-error-secondary); }
 .card[aria-pressed="true"] { outline: 2px solid var(--card-color); outline-offset: 2px; }
 .card:focus-visible, .request:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: 2px; }
-.card strong { font-size: 12px; overflow-wrap: anywhere; }
+.card strong { display: flex; align-items: center; gap: 6px; font-size: 12px; overflow-wrap: anywhere; }
+.card strong svg { flex: none; }
 .cardMeta { font-size: 10px; color: var(--enhanced-muted); }
 .cardMeta > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .preview, .result { font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
@@ -111,7 +115,7 @@
 .fold > summary { padding: 12px; border: 1px dashed var(--enhanced-border); border-radius: 8px; font-size: 12px; cursor: pointer; margin-bottom: 10px; }
 .inspector { width: clamp(320px, 30%, 440px); min-width: 0; flex: none; overflow: hidden; padding-bottom: calc(var(--dsh-composer-height, 152px) + 16px); }
 
-@container enhanced-canvas (max-width: 540px) {
+@container enhanced-canvas (max-width: 760px) {
   .laneHeadings { display: none; }
   .lanes { display: flex; flex-direction: column; gap: 8px; }
   .lane:empty { display: none; }
@@ -131,3 +135,55 @@
   .requestMeta { display: none; }
   .requests > header { padding-inline: 2px; }
 }
+
+.blocks { position: relative; isolation: isolate; }
+.mechanism { container: mechanism / inline-size; margin-bottom: 12px; }
+.mechanismHeading { font-size: 11px; line-height: 1.6; color: var(--enhanced-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
+.mechanismColumns, .mechanismGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.mechanismColumns { padding-bottom: 8px; font-size: 11px; color: var(--enhanced-muted); }
+.mechanismGrid > [data-mechanism-stage="0"] { grid-column: 1; }
+.mechanismGrid > [data-mechanism-stage="1"] { grid-column: 2; }
+.mechanismGrid > [data-mechanism-stage="2"] { grid-column: 3; }
+.mechanismGrid > [data-mechanism-wide="true"] { grid-column: 1 / -1; }
+.relations { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 6px; font-size: 11px; line-height: 1.5; color: var(--enhanced-muted); }
+.relations:empty { display: none; }
+.relations > button { padding: 0; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+.relations > button:hover { color: var(--dsw-alias-state-business-primary); text-decoration: underline; }
+@container mechanism (max-width: 520px) {
+  .mechanismColumns { display: none; }
+  .mechanismGrid { display: flex; flex-direction: column; gap: 6px; }
+}
+
+.scheduleBlock { --schedule-color: var(--dsw-alias-brand-primary-new-colorprimary-new-color); border: 1px solid var(--enhanced-border); border-top: 3px solid var(--schedule-color); border-radius: 9px; padding: 14px; margin-bottom: 12px; min-width: 0; }
+.scheduleBlock[data-scheduling-block="agents"] { --schedule-color: color-mix(in srgb, var(--dsw-alias-state-business-primary) 40%, var(--dsw-alias-state-error-secondary)); }
+.scheduleHeader, .schedulePhase > header, .memberHeading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center; }
+.scheduleHeader strong { display: flex; gap: 8px; align-items: center; font-size: 13px; overflow-wrap: anywhere; }
+.scheduleHeader svg { flex: none; }
+.scheduleHeader > span, .memberHeading > span, .schedulePhase > header > span { font-size: 11px; color: var(--enhanced-muted); }
+.scheduleCaption { margin: 6px 0 10px; font-size: 11px; line-height: 1.6; color: var(--enhanced-muted); }
+.schedulePhase { margin-top: 14px; border-top: 1px solid var(--enhanced-border); padding-top: 10px; }
+.schedulePhase > header { font-size: 12px; margin-bottom: 6px; }
+.scheduleMember { padding: 12px 0; min-width: 0; }
+.scheduleMember + .scheduleMember { border-top: 1px solid color-mix(in srgb, var(--enhanced-border) 55%, transparent); }
+.memberHeading { font-size: 12px; overflow-wrap: anywhere; }
+.memberTags { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; font-size: 11px; color: var(--enhanced-muted); }
+.scheduleEndpoints { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--enhanced-muted); margin-top: 8px; }
+.scheduleEndpoints button { padding: 4px 0; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; text-align: left; overflow-wrap: anywhere; }
+.scheduleEndpoints button:hover { color: var(--dsw-alias-state-business-primary); text-decoration: underline; }
+.scheduleEndpoints button[aria-pressed="true"] { color: var(--dsw-alias-state-business-primary); text-decoration: underline; }
+.memberTrack { position: relative; height: 10px; margin: 6px 5px 0; }
+.memberTrack > span { position: absolute; top: 4px; height: 2px; background: var(--schedule-color); }
+.memberTrack > span::before, .memberTrack > span::after { content: ''; position: absolute; width: 7px; height: 7px; border-radius: 50%; corner-shape: round; top: -2.5px; background: var(--schedule-color); }
+.memberTrack > span::before { left: -3.5px; }
+.memberTrack > span::after { right: -3.5px; }
+.memberTrack[data-complete="false"] > span { background: transparent; border-top: 1px dashed var(--enhanced-muted); }
+.memberTrack[data-complete="false"] > span::before, .memberTrack[data-complete="false"] > span::after { display: none; }
+.scheduleRaw { margin-top: 12px; font-size: 12px; }
+.scheduleRaw > summary { cursor: pointer; padding: 8px 0; color: var(--enhanced-muted); }
+.scheduleRaw .card { margin-top: 8px; }
+.receipt { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border-left: 2px solid color-mix(in srgb, var(--dsw-alias-state-business-primary) 40%, var(--dsw-alias-state-error-secondary)); padding: 10px 12px; margin-bottom: 10px; background: color-mix(in srgb, currentColor 3%, transparent); }
+.receipt > button:first-child { display: flex; flex: 1; min-width: min(100%, 200px); flex-direction: column; gap: 6px; background: transparent; border: 0; color: inherit; text-align: left; font: inherit; cursor: pointer; }
+.receipt strong { font-size: 12px; overflow-wrap: anywhere; }
+.receipt .preview { -webkit-line-clamp: 2; }
+.receipt > button[aria-pressed="true"] { outline: 1px solid var(--dsw-alias-state-business-primary); outline-offset: 3px; }
+.scheduleMember[data-outcome="failed"] .memberHeading > span { color: var(--dsw-alias-state-error-secondary); }

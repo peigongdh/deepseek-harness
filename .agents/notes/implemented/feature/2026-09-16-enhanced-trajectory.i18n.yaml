@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-09-16-enhanced-trajectory.md
-2026-09-16-enhanced-trajectory.md: cd6438e29fb083b2115806f8c4645ac2715f0939
-2026-09-16-enhanced-trajectory.zh.md: 89434618b6c19d0e48c6b3790a01959de92b1a72
+2026-09-16-enhanced-trajectory.md: c61327264424ed9762f39d4cb2445ab847c7270a
+2026-09-16-enhanced-trajectory.zh.md: 8b62a9822445feb68dee0f651237b8cbcdbe2dc7

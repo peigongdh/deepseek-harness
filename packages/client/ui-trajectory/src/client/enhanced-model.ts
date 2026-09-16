@@ -4,7 +4,9 @@ import { deriveTrajectoryLayout, type TrajectoryTurnModel } from './layout.ts'
 import type { EnhancedFact } from './enhanced-facts.ts'
 import type { TrajectorySnapshot } from './trajectory-contract.ts'
 import { trajectoryRecordId, type TrajectoryCellProps } from './trajectory-record.ts'
+import { deriveMechanisms, type MechanismNode } from './enhanced-mechanisms.ts'
 import type { TrajectoryTranslate } from './locales.ts'
+import { deriveScheduling, type SchedulingProjection } from './enhanced-scheduling.ts'
 
 /** Stable capability palette; status is independent from category. */
 export type EnhancedCapability = 'files' | 'search' | 'skills' | 'planning' | 'agents' | 'workflow' | 'human' | 'artifacts' | 'other'
@@ -44,6 +46,7 @@ export interface EnhancedItem {
   readonly childId?: SessionId
   readonly inherited: boolean
   readonly evidence: boolean
+  readonly mechanism?: MechanismNode
 }
 
 /** User request or manual compaction interlude, identified by durable sequence. */
@@ -58,6 +61,7 @@ export interface EnhancedGroup {
 export interface EnhancedModel {
   readonly groups: readonly EnhancedGroup[]
   readonly turns: readonly TrajectoryTurnModel[]
+  readonly scheduling: SchedulingProjection
 }
 
 function eventData(fact: EnhancedFact): Readonly<Record<string, unknown>> {
@@ -132,9 +136,9 @@ export function deriveEnhancedModel(
       for (const original of group.cells) {
         const cell = original.kind === 'user' && original.sourceSeq !== undefined && newRequestSeqs.has(original.sourceSeq)
           ? { ...original, opensTurn: true } : original
-        const seq = cell.sourceSeq ?? (cell.callId === undefined ? undefined : callSeqs.get(cell.callId)) ?? previousSeq
-        previousSeq = seq
         const tool = cell.kind === 'tool' || cell.kind === 'subtool'
+        const seq = (tool && cell.callId !== undefined ? callSeqs.get(cell.callId) : undefined) ?? cell.sourceSeq ?? previousSeq
+        previousSeq = seq
         items.push({
           id: trajectoryRecordId(cell), seq, turn: turn.turn, group: group.title, cell,
           lane: tool ? 'tool' : cell.kind === 'message' || cell.kind === 'compacted' ? 'model' : 'input',
@@ -176,7 +180,17 @@ export function deriveEnhancedModel(
     })
   }
   items.sort((a, b) => a.seq - b.seq || a.cell.index - b.cell.index)
-  const numbered = items.map((item, index) => ({ ...item, cell: { ...item.cell, index: index + 1 } }))
+  const mechanisms = deriveMechanisms(items, facts, t)
+  const numbered = items.map((item, index) => {
+    const mechanism = mechanisms.get(item.id)
+    return {
+      ...item, cell: { ...item.cell, index: index + 1 },
+      ...(mechanism === undefined ? {} : {
+        mechanism, lane: 'tool' as const,
+        capability: mechanism.kind === 'agents' || mechanism.kind === 'workflow' ? mechanism.kind : 'planning' as const,
+      }),
+    }
+  })
   const starts = numbered.filter(item => item.cell.kind === 'user' && item.cell.opensTurn === true)
   const groups: { id: string; title: string; kind: EnhancedGroup['kind']; items: EnhancedItem[] }[] = []
   const first = starts[0]
@@ -209,5 +223,5 @@ export function deriveEnhancedModel(
   }
   // Inspector groups retain the original step label so request metadata remains addressable.
   const turns: TrajectoryTurnModel[] = numbered.map(item => ({ turn: item.turn, groups: [{ title: item.group, cells: [item.cell] }] }))
-  return { groups: groups.filter(group => group.items.length > 0), turns }
+  return { groups: groups.filter(group => group.items.length > 0), turns, scheduling: deriveScheduling(groups, t) }
 }

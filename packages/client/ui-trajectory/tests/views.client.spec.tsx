@@ -74,6 +74,7 @@ const runtimes: SlotTestRuntime[] = []
 afterEach(async () => {
   cleanup()
   vi.restoreAllMocks()
+  vi.unstubAllGlobals()
   Reflect.deleteProperty(HTMLElement.prototype, 'scrollTo')
   for (const runtime of runtimes.splice(0)) await runtime.dispose()
 })
@@ -81,6 +82,12 @@ afterEach(async () => {
 // view cannot rehydrate into the next.
 beforeEach(() => {
   localStorage.clear()
+  // JSDOM has no layout observer; browser cases exercise measured arrows and clamping.
+  vi.stubGlobal('ResizeObserver', class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  })
 })
 
 /** Node fixture: user prologue, two turns, one tool result inside turn 1. */
