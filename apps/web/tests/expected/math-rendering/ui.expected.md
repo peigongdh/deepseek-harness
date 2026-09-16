@@ -8,6 +8,7 @@
   - tablist:
     - tab "Chat" [selected]
     - tab "Trajectory"
+    - tab "Enhanced trajectory"
 - text: Render this mathematical proof. {{clock}}
 - button "Copy":
   - img

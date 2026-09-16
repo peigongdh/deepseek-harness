@@ -96,5 +96,7 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
      * images are omitted.
      */
     'conversation.trajectory.images': { kind: 'single'; scope: 'session'; owner: MessageImagesOwnerProps }
+    /** Authorized image rendering for the selected parent or nested enhanced record. */
+    'conversation.enhanced-trajectory.images': { kind: 'single'; scope: 'session'; owner: MessageImagesOwnerProps }
   }
 }

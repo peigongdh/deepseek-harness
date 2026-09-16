@@ -802,6 +802,56 @@ describe('binding and stage lifecycle', () => {
 })
 
 describe('catalog-addressed navigation', () => {
+  it('retains shared child observations without selecting or resuming the child', async () => {
+    const b = bench()
+    await b.ctx.plugin(() => undefined)
+    try {
+      b.api.onSubagentList = () => Promise.resolve(ok({
+        entries: [{ kind: 'child', id: sid('child'), mode: 'continuable', label: 'Child', activity: 'inactive', hasChildren: false }],
+        parentAvailable: true,
+      }))
+      await feedList(b, [{ id: 'root' }])
+      b.svc.open(sid('root'))
+      await b.svc.refreshSubagents(sid('root'))
+      const address = { parentSessionId: sid('root'), childSessionId: sid('child'), mode: 'continuable' as const }
+      const first = b.svc.observeSubagent(address)
+      const second = b.svc.observeSubagent(address)
+      expect(first.binding).toBe(second.binding)
+      expect(b.svc.list.getSnapshot().current).toBe('root')
+      first.release()
+      first.release()
+      expect(b.svc.binding(sid('child'))).toBe(second.binding)
+      second.release()
+      expect(b.svc.binding(sid('child'))).toBeUndefined()
+      expect(b.api.callsOf('subagents.prompt')).toEqual([])
+      expect(b.api.callsOf('subagents.interrupt')).toEqual([])
+    } finally {
+      await b.ctx.fiber.dispose()
+    }
+  })
+
+  it('rejects an unverified observation and retains a selected child after release', async () => {
+    const b = bench()
+    await b.ctx.plugin(() => undefined)
+    try {
+      await feedList(b, [{ id: 'root' }])
+      const address = { parentSessionId: sid('root'), childSessionId: sid('child'), mode: 'one-shot' as const }
+      expect(() => b.svc.observeSubagent(address)).toThrow()
+      expect(b.svc.binding(sid('child'))).toBeUndefined()
+      b.api.onSubagentList = () => Promise.resolve(ok({
+        entries: [{ kind: 'child', id: sid('child'), mode: 'one-shot', activity: 'inactive', hasChildren: false }], parentAvailable: true,
+      }))
+      await b.svc.refreshSubagents(sid('root'))
+      const observation = b.svc.observeSubagent(address)
+      b.svc.openSubagent(address)
+      observation.release()
+      expect(b.svc.binding(sid('child'))).toBe(observation.binding)
+      expect(b.svc.list.getSnapshot().current).toBe('child')
+    } finally {
+      await b.ctx.fiber.dispose()
+    }
+  })
+
   it('uses catalog labels for a listed addressed route', async () => {
     const b = bench()
     b.api.onSubagentList = (payload) => {

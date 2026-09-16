@@ -48,6 +48,7 @@ import {
   TrajectoryView, type TrajectoryViewInjected,
 } from '../src/client/TrajectoryView.tsx'
 import { createTrajectoryDurationStore } from '../src/client/duration-store.ts'
+import type { EnhancedTrajectoryInjected } from '../src/client/EnhancedTrajectoryView.tsx'
 import { EMPTY_TRAJECTORY_SNAPSHOT } from '../src/client/trajectory-snapshot-builder.ts'
 import type { TrajectorySnapshot } from '../src/client/trajectory-contract.ts'
 import { deriveTrajectoryTimeline } from '../src/client/timeline.ts'
@@ -270,6 +271,7 @@ async function bench(snapshot = historySnapshot(NODES)) {
   const targetSources: ConversationTargetSources = {
     chat: createSnapshotStore<ChatSnapshot | undefined>(undefined),
     trajectory: trajectoryStore,
+    'enhanced-trajectory': createSnapshotStore([]),
   }
   const binding: ConversationBinding = {
     snapshot: conversationStore,
@@ -373,6 +375,15 @@ function mount(fixture: Awaited<ReturnType<typeof bench>>) {
       : injectEntry(SID)
     const injectedProps = 'hooks' in injected
       ? (() => {
+        if (entry.options.id === 'enhanced-trajectory') {
+          const { hooks, ...controls } = injected as EnhancedTrajectoryInjected
+          return {
+            ...controls,
+            useEnhancedFacts: bindSnapshotSelector(hooks.enhancedFacts),
+            useEnhancedChildren: bindSnapshotSelector(hooks.enhancedChildren),
+            t: tZh,
+          }
+        }
         const trajectory = injected as TrajectoryViewInjected
         return {
           loadOlder: trajectory.loadOlder,
@@ -422,13 +433,14 @@ describe('plugin registration', () => {
     expect(tabsOf(b.slots)).toEqual([
       { id: 'chat', label: 'Chat' },
       { id: 'trajectory', label: 'Trajectory' },
+      { id: 'enhanced-trajectory', label: 'Enhanced trajectory' },
     ])
   })
 
   it('fiber disposal removes the tab and leaves chat standing', async () => {
     const b = await bench()
     expect(b.events.entries().length).toBeGreaterThan(0)
-    expect(b.views.entries()).toHaveLength(1)
+    expect(b.views.entries()).toHaveLength(2)
 
     await b.feature.dispose()
 
@@ -497,11 +509,26 @@ describe('plugin registration', () => {
 })
 
 describe('tab switching in ConversationRoot', () => {
-  it('renders two tabs, defaults to chat, and switches to the trajectory ledger', async () => {
+  it('keeps automatic execution turns in one enhanced request and closes its shared inspector', async () => {
+    const b = await bench()
+    const view = mount(b)
+    fireEvent.click(screen.getByRole('tab', { name: 'Enhanced trajectory' }))
+    const navigation = screen.getByRole('navigation', { name: '用户请求' })
+    expect(navigation.querySelectorAll('button')).toHaveLength(1)
+    expect(view.container.querySelector('[data-conversation-composer-overlay]')).toBeTruthy()
+    const card = view.container.querySelector<HTMLButtonElement>('[data-enhanced-record]')
+    if (card === null) throw new Error('Enhanced card was not rendered')
+    fireEvent.click(card)
+    expect(screen.getByRole('complementary', { name: '事件详情' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: '关闭详情' }))
+    expect(screen.queryByRole('complementary', { name: '事件详情' })).toBeNull()
+  })
+
+  it('renders three tabs, defaults to chat, and switches to the trajectory ledger', async () => {
     const b = await bench()
     const view = mount(b)
     expect(screen.getByTestId('chat-body')).toBeTruthy()
-    expect(screen.getAllByRole('tab').map(t => t.textContent)).toEqual(['Chat', 'Trajectory'])
+    expect(screen.getAllByRole('tab').map(t => t.textContent)).toEqual(['Chat', 'Trajectory', 'Enhanced trajectory'])
 
     fireEvent.click(screen.getByRole('tab', { name: 'Trajectory' }))
     expect(screen.queryByText(/turns ·/)).toBeNull()

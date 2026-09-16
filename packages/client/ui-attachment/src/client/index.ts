@@ -21,6 +21,10 @@ export function apply(ctx: ClientContext): void {
     name: 'conversation.message.images',
     locale: 'conversation',
   }, MessageImages))
+  ctx.slots.inject('conversation.enhanced-trajectory.images', () => ctx.slots.register({
+    name: 'conversation.enhanced-trajectory.images',
+    locale: 'conversation',
+  }, MessageImages))
   ctx.slots.inject('conversation.trajectory.images', () => ctx.slots.register({
     name: 'conversation.trajectory.images',
     locale: 'conversation',

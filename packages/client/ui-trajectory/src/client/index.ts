@@ -15,6 +15,9 @@ import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 import { createTrajectoryDurationStore } from './duration-store.ts'
+import { createEnhancedChildren, type EnhancedChildrenController } from './enhanced-children.ts'
+import { EMPTY_ENHANCED_FACTS, registerEnhancedFacts, type EnhancedFact } from './enhanced-facts.ts'
+import { EnhancedTrajectoryView, type EnhancedTrajectoryInjected } from './EnhancedTrajectoryView.tsx'
 import { en, NS, zh } from './locales.ts'
 import { registerTrajectoryAssistantDefinition } from './trajectory-assistant-definition.ts'
 import { registerTrajectoryCompactionDefinitions } from './trajectory-compaction-definition.ts'
@@ -46,6 +49,20 @@ export const inject = ['slots', 'sessions', 'uiSession', 'uiConversation', 'loca
  */
 export function apply(ctx: Context): void {
   const trajectorySources = new WeakMap<SessionBinding, ObservableSnapshot<TrajectorySnapshot>>()
+  const factsSources = new WeakMap<SessionBinding, ObservableSnapshot<readonly EnhancedFact[]>>()
+  const childrenSources = new WeakMap<SessionBinding, EnhancedChildrenController>()
+  const factsSource = (binding: SessionBinding): ObservableSnapshot<readonly EnhancedFact[]> => {
+    let source = factsSources.get(binding)
+    if (source === undefined) {
+      const target = ctx.uiConversation.binding(binding).target('enhanced-trajectory')
+      source = {
+        getSnapshot: () => target.getSnapshot() ?? EMPTY_ENHANCED_FACTS,
+        subscribe: listener => target.subscribe(listener),
+      }
+      factsSources.set(binding, source)
+    }
+    return source
+  }
   const trajectorySource = (binding: SessionBinding): ObservableSnapshot<TrajectorySnapshot> => {
     let source = trajectorySources.get(binding)
     if (source === undefined) {
@@ -70,6 +87,7 @@ export function apply(ctx: Context): void {
   registerTrajectoryToolDefinition(ctx)
   registerTrajectoryCompactionDefinitions(ctx)
   registerTrajectoryConversationView(ctx)
+  registerEnhancedFacts(ctx)
   ctx.uiSession.provide({
     hooks: ['trajectory'],
     resolve: binding => ({ hooks: { trajectory: trajectorySource(binding) } }),
@@ -104,4 +122,34 @@ export function apply(ctx: Context): void {
       }
     },
   }, TrajectoryView))
+  ctx.slots.inject('conversation.view', () => ctx.slots.register({
+    name: 'conversation.view',
+    id: 'enhanced-trajectory',
+    order: 20,
+    locale: NS,
+    label: () => t('view.enhancedTrajectory'),
+    children: {
+      'conversation.enhanced-trajectory.images': { kind: 'single', scope: 'session' },
+    },
+    inject: (sessionId: SessionId): EnhancedTrajectoryInjected => {
+      const binding = ctx.sessions.binding(sessionId)
+      if (binding === undefined) throw new Error(`ui-trajectory: session "${sessionId}" is unavailable`)
+      let children = childrenSources.get(binding)
+      if (children === undefined) {
+        children = createEnhancedChildren(ctx.sessions, trajectorySource, factsSource)
+        childrenSources.set(binding, children)
+        const controller = children
+        ctx.effect(() => () => { controller.dispose() }, 'enhanced-trajectory: child observations')
+      }
+      return {
+        hooks: { enhancedFacts: factsSource(binding), enhancedChildren: children },
+        loadOlder: () => binding.session.loadOlder(),
+        expandChild: children.expand,
+        collapseChild: children.collapse,
+        loadOlderChild: children.loadOlder,
+        loadImage: (id, attachment) => ctx.uiConversation.imageUrl(id, attachment),
+        peekImage: (id, attachment) => ctx.uiConversation.peekImageUrl(id, attachment),
+      }
+    },
+  }, EnhancedTrajectoryView))
 }

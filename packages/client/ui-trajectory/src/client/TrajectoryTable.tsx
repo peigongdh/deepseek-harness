@@ -376,6 +376,8 @@ function AssistantTimingPanel({
 
 /** Props for the trajectory ledger. */
 export interface TrajectoryTableProps {
+  /** Render only the reusable inspector beside a separately owned presentation. */
+  inspectorOnly?: boolean
   /** Trajectory locale seat. */
   t: TrajectoryTranslate
   /** Slot-backed durable image renderer shared with the Chat gallery. */
@@ -1801,6 +1803,7 @@ function OverviewSection({
  * @returns The ledger and an optional local record inspector.
  */
 export function TrajectoryTable({
+  inspectorOnly = false,
   t,
   renderImages,
   requestNumbers: sessionRequestNumbers,
@@ -2303,8 +2306,8 @@ export function TrajectoryTable({
   const historyRowOffset = hasOlderRecords ? 1 : 0
 
   return (
-    <div ref={rootRef} className={css.split} style={splitStyle}>
-      <div
+    <div ref={rootRef} className={`${css.split} ${inspectorOnly ? css.inspectorOnly : ''}`} style={splitStyle}>
+      {!inspectorOnly && <div
         ref={tablePaneRef}
         className={css.tablePane}
         data-trajectory-scroll=""
@@ -2646,7 +2649,7 @@ export function TrajectoryTable({
             )}
           </tbody>
         </table>
-      </div>
+      </div>}
       {(selectedRequestInfo !== undefined
         || promptSelected
         || (selected !== undefined && selectedState !== undefined)) && (
@@ -2784,7 +2787,10 @@ export function TrajectoryTable({
               type="button"
               className={css.close}
               aria-label={t('details.close')}
-              onClick={clearInspectorSelection}
+              onClick={() => {
+                clearInspectorSelection()
+                if (inspectorOnly) onClearSelection?.()
+              }}
             >
               <span aria-hidden="true">×</span>
             </button>

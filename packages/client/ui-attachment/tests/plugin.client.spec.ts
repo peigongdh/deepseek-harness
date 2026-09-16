@@ -15,6 +15,7 @@ async function bench() {
       'conversation.input.attachments': { kind: 'single', scope: 'session-maybe' },
       'conversation.message.images': { kind: 'single', scope: 'session' },
       'conversation.trajectory.images': { kind: 'single', scope: 'session' },
+      'conversation.enhanced-trajectory.images': { kind: 'single', scope: 'session' },
       'tool.call.images': { kind: 'single', scope: 'session' },
     },
   } as never, () => null)
@@ -43,6 +44,7 @@ describe('attachment plugin', () => {
       locale: 'conversation',
       component: MessageImages,
     }])
+    expect(ctx.slots.entries('conversation.enhanced-trajectory.images')).toMatchObject([{ locale: 'conversation', component: MessageImages }])
     expect(ctx.slots.entries('tool.call.images')).toMatchObject([{
       locale: 'conversation',
       component: MessageImages,

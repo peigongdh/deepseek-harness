@@ -28,7 +28,7 @@ import {
 import type { RemoteFailure, RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import type { SessionEventSource } from '../contract/events.ts'
 import type { SessionFace } from '../contract/session.ts'
-import type { AgentContext, ISessions } from '../contract/sessions.ts'
+import type { AgentContext, ISessions, SubagentObservation } from '../contract/sessions.ts'
 import { createScope, scopeOf as scopeTagOf } from '../scope.ts'
 import { SessionManager } from './manager.ts'
 import type { SessionRemotes } from './remotes.ts'
@@ -202,6 +202,7 @@ export class ClientSessions implements ISessions {
   private readonly selection: SnapshotStore<SessionSelection>
 
   private readonly scopes = new Map<SessionId, ScopeRecord>()
+  private readonly observations = new Map<SessionId, number>()
   /** In-flight scope drops remain here after records leave `scopes`, so root disposal can await quiescence. */
   private readonly scopeDrops = new Set<Promise<void>>()
   /**
@@ -254,6 +255,7 @@ export class ClientSessions implements ISessions {
       disposeManagerProjection()
       const scopes = [...this.scopes]
       this.scopes.clear()
+      this.observations.clear()
       this.deferredRemovals.clear()
       this.watched = undefined
       for (const [id, record] of scopes) this.startScopeDrop(id, record)
@@ -277,6 +279,33 @@ export class ClientSessions implements ISessions {
    */
   openSubagent(address: SubagentAddress): void {
     this.manager.selectSubagent(address)
+  }
+
+  /**
+   * Follow a catalog child without changing navigation or waking its Agent.
+   * @param address - healthy direct-parent catalog address.
+   * @returns Shared binding and an idempotent release for this observer.
+   * @throws When the catalog does not authorize the supplied address.
+   */
+  observeSubagent(address: SubagentAddress): SubagentObservation {
+    this.manager.prepareSubagent(address)
+    const id = address.childSessionId
+    this.observations.set(id, (this.observations.get(id) ?? 0) + 1)
+    const record = this.scopes.get(id) ?? this.materializeScope(id)
+    void record.session.open()
+    let released = false
+    return {
+      binding: record.binding,
+      release: () => {
+        if (released) return
+        released = true
+        const count = this.observations.get(id)
+        if (count === undefined) return
+        if (count > 1) this.observations.set(id, count - 1)
+        else this.observations.delete(id)
+        this.pruneScopes()
+      },
+    }
   }
 
   /**
@@ -567,10 +596,10 @@ export class ClientSessions implements ISessions {
     return record
   }
 
-  /** The one aliveness predicate shared by scope mint and prune: host-listed or currently addressed. */
+  /** Scopes remain available while host-listed, selected, or retained by child observations. */
   private eligible(id: SessionId): boolean {
     const { ids, current } = this.list.getSnapshot()
-    return current === id || ids.includes(id)
+    return current === id || ids.includes(id) || this.observations.has(id)
   }
 
   /** Project the manager's list snapshot into the store (title derivation is display-only). */

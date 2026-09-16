@@ -31,6 +31,7 @@ const SIDEBAR_EXPECTED = fileURLToPath(new URL('../../../snapshots/web/subagent-
 const UNAVAILABLE_GRANDCHILD_EXPECTED = fileURLToPath(new URL('../../../snapshots/web/subagent-conversation/nested.expected.md', import.meta.url))
 const FORK_EXPECTED = fileURLToPath(new URL('../../../snapshots/web/subagent-conversation/fork.expected.md', import.meta.url))
 const MODE = webSnapshotMode()
+const ENHANCED_EXPECTED = fileURLToPath(new URL('../../../snapshots/web/subagent-conversation/enhanced.expected.md', import.meta.url))
 const LABEL = 'event-sourcing researcher'
 const ONE_SHOT_LABEL = 'event-sourcing reviewer'
 const NESTED_LABEL = 'example editor'
@@ -293,6 +294,56 @@ describe('web e2e: persisted subagent conversation and human continuation', () =
     }
     if (failures.length === 1) throw failures[0]
     if (failures.length > 1) throw new AggregateError(failures, 'subagent Web teardown failed')
+  })
+
+  it('expands child evidence inside the enhanced parent trajectory and inspects its raw records', async () => {
+    onTestFailed(() => saveFailureShot(page, 'web-e2e-enhanced-trajectory'))
+    await page.getByRole('tab', { name: 'Chat', exact: true }).hover()
+    await page.getByRole('tree', { name: 'Subagent sessions' }).waitFor({ state: 'hidden' })
+    await page.getByRole('tab', { name: 'Enhanced trajectory', exact: true }).click()
+    const enhanced = page.locator('[data-enhanced-trajectory]')
+    await enhanced.getByRole('navigation', { name: 'User requests' }).waitFor()
+    const expand = enhanced.getByRole('button', { name: 'Expand child here', exact: true })
+    await expand.first().waitFor()
+    await expand.first().click()
+    await enhanced.getByText(INITIAL_PROMPT, { exact: true }).last().waitFor({ timeout: 15_000 })
+    expect(await page.getByRole('button', { name: '3 subagents', exact: true }).count()).toBe(1)
+    expect(scaffold.ctx.agents.get(childId)).toBeUndefined()
+    const childCard = enhanced.locator('[data-enhanced-record]').filter({ hasText: INITIAL_PROMPT }).first()
+    await childCard.click()
+    await enhanced.getByRole('complementary', { name: 'Event details' }).waitFor()
+    const geometry = await enhanced.evaluate((element) => {
+      const rect = element.getBoundingClientRect()
+      const details = element.querySelector('[aria-label="Event details"]')?.getBoundingClientRect()
+      return { left: rect.left, right: rect.right, width: innerWidth, detailsLeft: details?.left, detailsRight: details?.right }
+    })
+    expect(geometry.left).toBeGreaterThanOrEqual(0)
+    expect(geometry.right).toBeLessThanOrEqual(geometry.width)
+    expect(geometry.detailsRight).toBeLessThanOrEqual(geometry.width)
+    await compareOrRefreshGolden(ENHANCED_EXPECTED,
+      await captureStableAria(page, '[data-enhanced-trajectory]', scaffold.workspaceCwd), MODE)
+    await enhanced.getByRole('button', { name: 'Close details', exact: true }).click()
+    expect(await enhanced.getByRole('complementary', { name: 'Event details' }).count()).toBe(0)
+    const viewport = page.viewportSize()!
+    await page.setViewportSize({ width: 760, height: 900 })
+    await childCard.focus()
+    await childCard.press('Enter')
+    await enhanced.getByRole('complementary', { name: 'Event details' }).waitFor()
+    const narrow = await enhanced.evaluate((element) => {
+      const rect = element.getBoundingClientRect()
+      const details = element.querySelector('[aria-label="Event details"]')!.getBoundingClientRect()
+      return { left: rect.left, right: rect.right, detailsLeft: details.left, detailsRight: details.right, width: innerWidth }
+    })
+    expect(narrow.left).toBeGreaterThanOrEqual(0)
+    expect(narrow.right).toBeLessThanOrEqual(narrow.width)
+    expect(narrow.detailsLeft).toBeGreaterThanOrEqual(narrow.left)
+    expect(narrow.detailsRight).toBeLessThanOrEqual(narrow.right)
+    await enhanced.getByRole('button', { name: 'Close details', exact: true }).click()
+    await page.setViewportSize(viewport)
+    await enhanced.getByRole('button', { name: 'Collapse child', exact: true }).first().click()
+    expect(await enhanced.getByText(INITIAL_PROMPT, { exact: true }).count()).toBe(0)
+    await page.getByRole('tab', { name: 'Chat', exact: true }).click()
+    expect(tripwire.pageErrors).toEqual([])
   })
 
   it('keeps known descendants reachable across a stale empty catalog response', async () => {

@@ -8,6 +8,7 @@
   - tablist:
     - tab "Chat" [selected]
     - tab "Trajectory"
+    - tab "Enhanced trajectory"
 - button "System prompt":
   - img
   - img

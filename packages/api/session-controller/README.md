@@ -37,6 +37,8 @@ The Session object also carries local submission echoes: `session.beginSubmissio
 
 The user-invocable `skills/list` metadata includes the winning provider’s optional instruction-file `path`. The composer can preview that file without loading every skill body or activating a cold Agent.
 
+The Client `sessions.observeSubagent(address)` retains a healthy catalog child’s shared binding and opens its history without changing selection or starting its Agent. The returned `release()` is idempotent. An unlisted, unselected child remains addressable while any observation retains it; the last release permits scope disposal. Selected and listed Sessions keep their ordinary retention policy. Plugin consumers own their subscriptions and release observations when their view closes.
+
 <a id="session-media-references"></a>
 ## Session media references
 

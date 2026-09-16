@@ -35,6 +35,14 @@ Selection, timeline navigation, folding, and search cover the React-visible wind
 
 A fixed Overview above the ledger projects real record start/duration timing from left to right; Assistant spans divide recorded TTFT from decoding, and a 500 ms hover reveals exact clock and duration details. Dragging an interval focuses the ledger on every record active at any point in that inclusive range; wheel gestures zoom the time domain; a right-button click clears the selected interval, and a right-button drag pans an already zoomed viewport. The initial view and streaming updates stay at the tail; scrolling upward suspends following so new records do not interrupt inspection of earlier rows.
 
+### Enhanced trajectory
+
+Open Enhanced trajectory to follow one user request across execution turns. The left list separates direct user requests while retaining answers, in-flight steering, and automatic continuations within their request. Manual compaction appears between requests. A notice identifies unloaded history; Load earlier history extends the same request list.
+
+The center orders user/context, model, and tool cards downward. Capability labels distinguish file/environment work, search, skills, plans/goals, Agent collaboration, workflows, human interaction, and deliverables. Consecutive ordinary steps fold into a counted disclosure; errors and mechanism state changes remain visible. Select a card to inspect its original content, parameters, result, schema, or timing. Unknown tools keep their recorded name and generic category.
+
+Expand a recorded child to read its history inside the parent request. Expansion follows the authenticated child address without selecting or resuming its Agent; collapse releases the view observation without canceling work. Child pages and failures remain local to that child. Inherited fork records are labeled when their recorded seed boundary is loaded. The view displays recorded evidence and does not verify the Agent’s conclusions.
+
 -----
 
 <a id="understand-the-implementation"></a>

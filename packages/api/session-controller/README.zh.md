@@ -37,6 +37,8 @@ Session 对象还承载本地提交回显：`session.beginSubmission` 在调用�
 
 面向用户调用的 `skills/list` 元数据包含胜出提供方可选的指令文件 `path`。输入框可据此预览文件，无需加载每个 skill 的正文或激活冷态 Agent。
 
+Client 的 `sessions.observeSubagent(address)` 保留健康目录子项的共享绑定并打开历史，不改变选中项或启动其 Agent。返回的 `release()` 可重复调用。未列出且未选中的子会话在存在观察者时仍可寻址；最后一次释放允许销毁其作用域。已选中和已列出的会话保持原有保留策略。插件消费者负责自身订阅，并在视图关闭时释放观察。
+
 <a id="session-media-references"></a>
 ## 会话媒体引用
 

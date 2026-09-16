@@ -8,6 +8,7 @@
   - tablist:
     - tab "Chat" [selected]
     - tab "Trajectory"
+    - tab "Enhanced trajectory"
 - text: Research notes what changed? Referenced session · Research notes {{clock}}
 - button "Copy":
   - img

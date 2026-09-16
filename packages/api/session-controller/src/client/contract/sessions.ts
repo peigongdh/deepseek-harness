@@ -17,6 +17,13 @@ import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
 
 export type { AgentContext } from '../scope.ts'
 
+/** Read-only history attachment that does not change the selected Session. */
+export interface SubagentObservation {
+  readonly binding: SessionBinding
+  /** Release this attachment; repeated calls do nothing and never cancel the Agent. */
+  release(): void
+}
+
 /** The sessions-service face injected as `ctx.sessions`. */
 export interface ISessions {
   /** The useSessions standard feed (list rows + current selection; read face — writes stay inside the domain). */
@@ -47,6 +54,13 @@ export interface ISessions {
    * @param address - catalog-derived parent and child ids.
    */
   openSubagent(address: SubagentAddress): void
+  /**
+   * Retain and follow a healthy catalog child without selecting or resuming its Agent.
+   * @param address - catalog-derived direct-parent address.
+   * @returns Shared Session binding and an idempotent attachment release.
+   * @throws When the address does not identify a healthy catalog child.
+   */
+  observeSubagent(address: SubagentAddress): SubagentObservation
   /**
    * Resolve an already discovered direct-parent address without opening it.
    * @param id - possible addressed child id.

@@ -1,0 +1,83 @@
+- navigation "User requests":
+  - strong: User requests
+  - text: "1"
+  - button "Request 1 Ask a research subagent to explain event sourcing. 7 records · Failed"
+- main:
+  - strong: Ask a research subagent to explain event sourcing.
+  - text: Execution order runs downward · Cards show recorded duration User / context Model Tools / mechanisms Turn 1 ·Message
+  - 'button "SYSTEM #7 SYSTEM Initial System Prompt {{duration}}"':
+    - text: "SYSTEM #7"
+    - strong: SYSTEM
+    - text: Initial System Prompt {{duration}}
+  - 'button "USER #8 USER Ask a research subagent to explain event sourcing. {{duration}}"':
+    - text: "USER #8"
+    - strong: USER
+    - text: Ask a research subagent to explain event sourcing. {{duration}}
+  - 'button "CONTEXT #9 CONTEXT @deepseek-ai/dsh-system-prompt {{duration}}"':
+    - text: "CONTEXT #9"
+    - strong: CONTEXT
+    - text: "@deepseek-ai/dsh-system-prompt {{duration}}"
+  - text: Turn 1 ·Step 1
+  - 'button "Message #13 Message Event sourcing is a pattern where all changes to an application''s state are stored as an immutable, append-only sequence of events, rather than persisting only the current state, enabling full auditability, temporal queries, and event-driven architectures. {{duration}}"':
+    - text: "Message #13"
+    - strong: Message
+    - text: Event sourcing is a pattern where all changes to an application's state are stored as an immutable, append-only sequence of events, rather than persisting only the current state, enabling full auditability, temporal queries, and event-driven architectures. {{duration}}
+  - text: Between turns ·State evidence
+  - 'button "Agent collaboration #16 Child registered event-sourcing researcher State evidence"':
+    - text: "Agent collaboration #16"
+    - strong: Child registered
+    - text: event-sourcing researcher State evidence
+  - button "Collapse child" [expanded]
+  - paragraph: Child Session trajectory · {{uuid}}
+  - text: Turn 1 ·Message
+  - 'button "SYSTEM #7 SYSTEM Initial System Prompt {{duration}}"':
+    - text: "SYSTEM #7"
+    - strong: SYSTEM
+    - text: Initial System Prompt {{duration}}
+  - 'button "USER #8 USER Explain event sourcing in one sentence. {{duration}}" [pressed]':
+    - text: "USER #8"
+    - strong: USER
+    - text: Explain event sourcing in one sentence. {{duration}}
+  - 'button "CONTEXT #9 CONTEXT @deepseek-ai/dsh-system-prompt {{duration}}"':
+    - text: "CONTEXT #9"
+    - strong: CONTEXT
+    - text: "@deepseek-ai/dsh-system-prompt {{duration}}"
+  - text: Turn 1 ·Step 1
+  - 'button "Message #13 Message Event sourcing is a pattern where all changes to an application''s state are stored as an immutable, append-only sequence of events, rather than persisting only the current state, enabling full auditability, temporal queries, and event-driven architectures. {{duration}}"':
+    - text: "Message #13"
+    - strong: Message
+    - text: Event sourcing is a pattern where all changes to an application's state are stored as an immutable, append-only sequence of events, rather than persisting only the current state, enabling full auditability, temporal queries, and event-driven architectures. {{duration}}
+  - text: Turn 2 ·Step 1
+  - 'button "Message #20 Message Inspect raw evidence Failed"':
+    - text: "Message #20"
+    - strong: Message
+    - text: Inspect raw evidence Failed
+  - text: Turn 2 ·Message
+  - 'button "Agent collaboration #21 CONTEXT subagent-settled {{duration}}"':
+    - text: "Agent collaboration #21"
+    - strong: CONTEXT
+    - text: subagent-settled {{duration}}
+- complementary:
+  - complementary "Event details":
+    - text: USER Turn 1 · Message
+    - button "Close details"
+    - tablist "Event details":
+      - tab "Summary" [selected]
+      - tab "Preview"
+      - tab "Raw"
+      - tab "Source"
+    - tabpanel "Summary":
+      - term: Source
+      - definition:
+        - button "User":
+          - text: User
+          - img
+      - term: Status
+      - definition: Completed
+      - term: Duration
+      - definition: {{duration}}
+      - heading "Preview" [level=3]:
+        - button "Preview":
+          - text: Preview
+          - img
+      - paragraph: "Explain event sourcing in one sentence. Your parent agent id is \"session-{{uuid}}\". Before you finish, send your result to that agent with send_message({ agent_id: \"session-{{uuid}}\", message: \"<self-contained result>\" }). The parent shares your workspace but does not automatically receive your transcript, tool output, or reasoning. Send earlier messages as well when a finding changes what the parent should do next; sending a message does not end your turn."

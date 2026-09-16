@@ -8,6 +8,7 @@
   - tablist:
     - tab "Chat" [selected]
     - tab "Trajectory"
+    - tab "Enhanced trajectory"
 - text: Show the local preview URL. {{clock}}
 - button "Copy":
   - img

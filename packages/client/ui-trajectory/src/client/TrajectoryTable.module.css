@@ -22,6 +22,21 @@
   container: trajectory-table / inline-size;
 }
 
+.inspectorOnly {
+  flex: none;
+  width: 100%;
+  height: 100%;
+}
+
+.inspectorOnly .details {
+  width: 100% !important;
+  max-width: none;
+}
+
+.inspectorOnly .detailsResizeHandle {
+  display: none;
+}
+
 .historyLoading {
   position: sticky;
   z-index: 5;

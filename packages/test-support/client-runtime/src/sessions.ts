@@ -197,7 +197,7 @@ export class TestSessions implements ISessions {
 
   /** Calls observed on the service-level face, newest last. */
   readonly calls: {
-    method: 'create' | 'open' | 'openSubagent' | 'setSubagentCatalogOpen' | 'refreshSubagents'
+    method: 'create' | 'open' | 'openSubagent' | 'observeSubagent' | 'setSubagentCatalogOpen' | 'refreshSubagents'
       | 'clear' | 'refresh' | 'search' | 'fork'
     args: unknown[]
   }[] = []
@@ -451,6 +451,14 @@ export class TestSessions implements ISessions {
       draft.current = address.childSessionId
       draft.currentAddress = address
     })
+  }
+
+  /** Observe an existing fixture without changing the current selection. */
+  observeSubagent(address: SubagentAddress) {
+    this.calls.push({ method: 'observeSubagent', args: [address] })
+    const binding = this.binding(address.childSessionId)
+    if (binding === undefined) throw new Error(`Missing child fixture: ${address.childSessionId}`)
+    return { binding, release: () => {} }
   }
 
   /** Resolve the current fixture's retained catalog address. */
